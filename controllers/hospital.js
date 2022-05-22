@@ -22,6 +22,16 @@ async function getHospitals(req, res = response) {
 async function createHospital(req, res = response) {
   try {
     const uid = req.uid;
+
+    const userDB = await User.findById(uid);
+
+    if (!userDB) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'user doesnt exist',
+      });
+    }
+
     const hospital = new Hospital({
       user: uid,
       ...req.body,
@@ -48,16 +58,6 @@ async function updateHospital(req, res = response) {
     const id = req.params.id;
 
     const hospitalDB = await Hospital.findById(id);
-    console.log(req.body.user, 'paso');
-
-    const userDB = await User.findById(req.body.user);
-
-    if (!userDB) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'User not found',
-      });
-    }
 
     if (!hospitalDB) {
       return res.status(404).json({
@@ -66,7 +66,12 @@ async function updateHospital(req, res = response) {
       });
     }
 
-    const update = await Hospital.findByIdAndUpdate(id, req.body, { new: true });
+    const changesHospital = {
+      ...req.body,
+      user: req.uid,
+    };
+
+    const update = await Hospital.findByIdAndUpdate(id, changesHospital, { new: true });
 
     res.json({
       ok: true,

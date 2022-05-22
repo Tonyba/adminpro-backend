@@ -6,12 +6,8 @@ const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validete-fields');
 
 router.get('/', validateJWT, getHospitals);
-router.post(
-  '/',
-  [validateJWT, check('name', 'the name cannot be empty').not().isEmpty(), check('user', 'user id must be valid').isMongoId(), validateFields],
-  createHospital
-);
-router.put('/:id', validateJWT, updateHospital);
+router.post('/', [validateJWT, check('name', 'name cannot be empty').not().isEmpty(), validateFields], createHospital);
+router.put('/:id', [validateJWT, check('name', 'name cannot be empty').not().isEmpty(), validateFields], updateHospital);
 router.delete('/:id', validateJWT, deleteHospital);
 
 module.exports = router;

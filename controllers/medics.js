@@ -62,22 +62,7 @@ async function updateMedic(req, res = response) {
     const id = req.params.id;
 
     const medicDB = await Medic.findById(id);
-    const hospitalDB = await Hospital.findById(req.body.hospital);
-    const userDB = await User.findById(req.body.user);
-
-    if (!userDB) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'User not found',
-      });
-    }
-
-    if (!hospitalDB) {
-      return res.status(404).json({
-        ok: false,
-        msg: 'hospital not found',
-      });
-    }
+    const userDB = await User.findById(req.uid);
 
     if (!medicDB) {
       return res.status(404).json({
@@ -86,7 +71,20 @@ async function updateMedic(req, res = response) {
       });
     }
 
-    const update = await Medic.findByIdAndUpdate(id, req.body, { new: true });
+    if (!userDB) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'User not found',
+      });
+    }
+
+    const changesMedic = {
+      ...req.body,
+      user: req.uid,
+      hospital: req.body.hospital,
+    };
+
+    const update = await Medic.findByIdAndUpdate(id, changesMedic, { new: true });
 
     res.json({
       ok: true,

@@ -11,7 +11,7 @@ async function googleVerify(token) {
   const payload = ticket.getPayload();
   const userid = payload['sub'];
 
-  console.log(payload);
+  // console.log(payload);
 
   const { name, email, picture } = payload;
 
