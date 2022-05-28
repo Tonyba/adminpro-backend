@@ -12,38 +12,28 @@
     <h1>Google Sign In</h1>
 
     <div id="buttonDiv"></div>
-    <button id="signout_button">Sign Out</button>
+    <a href="#" onclick="onSignout();">Sign out</a>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <script>
       function handleCredentialResponse(response) {
         console.log('Encoded JWT ID token: ' + response.credential);
+      }
 
-        const responsePayload = decodeJwtResponse(response.credential);
-
-        console.log('ID: ' + responsePayload.sub);
-        console.log('Full Name: ' + responsePayload.name);
-        console.log('Given Name: ' + responsePayload.given_name);
-        console.log('Family Name: ' + responsePayload.family_name);
-        console.log('Image URL: ' + responsePayload.picture);
-        console.log('Email: ' + responsePayload.email);
+      function onSignout() {
+        google.accounts.id.disableAutoSelect();
       }
 
       window.onload = function () {
-        const button = document.getElementById('signout_button');
-        button.onclick = () => {
-          google.accounts.id.disableAutoSelect();
-        };
-
         google.accounts.id.initialize({
           client_id: '21129360132-tdhfp8h27q2uab279kd1cu3q21f79jld.apps.googleusercontent.com',
           callback: handleCredentialResponse,
         });
         google.accounts.id.renderButton(
           document.getElementById('buttonDiv'),
-          { theme: 'outline', size: 'large' } // customization attributes
+          { theme: 'outline', size: 'medium', width: 200 } // customization attributes
         );
+
         // google.accounts.id.prompt(); // also display the One Tap dialog
       };
     </script>

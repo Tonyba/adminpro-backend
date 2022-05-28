@@ -3,6 +3,7 @@ const { response } = require('express');
 const { googleVerify } = require('../helpers/google-verify');
 const { generateJWT } = require('../helpers/jwt');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 async function login(req, res = response) {
   try {
@@ -10,7 +11,7 @@ async function login(req, res = response) {
     const userDB = await User.findOne({ email });
 
     if (!userDB) {
-      return res.json(400).json({
+      return res.status(400).json({
         ok: false,
         msg: 'Email or Password not valid',
       });
@@ -31,10 +32,11 @@ async function login(req, res = response) {
     res.json({
       ok: true,
       token,
+      user: userDB,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: 'Unexpected Error. Check logs',
       error,
@@ -84,7 +86,26 @@ async function googleSignIn(req, res = response) {
   }
 }
 
+async function renewToken(req, res = response) {
+  try {
+    const token = await generateJWT(req.uid);
+
+    res.json({
+      ok: true,
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'token is not valid',
+      error,
+    });
+  }
+}
+
 module.exports = {
   login,
   googleSignIn,
+  renewToken,
 };
