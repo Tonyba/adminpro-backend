@@ -68,12 +68,11 @@ async function googleSignIn(req, res = response) {
     }
 
     await user.save();
-
-    const token = await generateJWT(user.uid);
+    const token = await generateJWT(user._id.valueOf());
 
     res.json({
       ok: true,
-      msg: 'google sigin',
+      msg: 'google signin',
       token,
     });
   } catch (error) {
@@ -89,10 +88,12 @@ async function googleSignIn(req, res = response) {
 async function renewToken(req, res = response) {
   try {
     const token = await generateJWT(req.uid);
+    const user = await User.findById(req.uid);
 
     res.json({
       ok: true,
       token,
+      user,
     });
   } catch (error) {
     console.log(error);
