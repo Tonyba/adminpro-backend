@@ -7,7 +7,6 @@ async function getUsers(req, res = response) {
   try {
     const from = Number(req.query.from) || 0;
     const to = Number(req.query.limit) || 5;
-    console.log(from);
 
     // const users = await User.find({}, 'name email role google').skip(from).limit(to);
 
