@@ -30,6 +30,6 @@ app.use('/api/medic', medicRoutes);
 app.use('/api/all', allRoutes);
 app.use('/api/upload', uploadRoutes);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('server connected');
 });

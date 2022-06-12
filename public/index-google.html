@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-signin-client_id" content="21129360132-tdhfp8h27q2uab279kd1cu3q21f79jld.apps.googleusercontent.com" />
+
+    <title>Demo Login</title>
+  </head>
+  <body>
+    <h1>Google Sign In</h1>
+
+    <div id="buttonDiv"></div>
+    <a href="#" onclick="onSignout();">Sign out</a>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        console.log('Encoded JWT ID token: ' + response.credential);
+      }
+
+      function onSignout() {
+        google.accounts.id.disableAutoSelect();
+      }
+
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: '21129360132-tdhfp8h27q2uab279kd1cu3q21f79jld.apps.googleusercontent.com',
+          callback: handleCredentialResponse,
+        });
+        google.accounts.id.renderButton(
+          document.getElementById('buttonDiv'),
+          { theme: 'outline', size: 'medium', width: 200 } // customization attributes
+        );
+
+        // google.accounts.id.prompt(); // also display the One Tap dialog
+      };
+    </script>
+  </body>
+</html>
