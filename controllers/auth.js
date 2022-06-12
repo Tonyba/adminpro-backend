@@ -4,6 +4,7 @@ const { googleVerify } = require('../helpers/google-verify');
 const { generateJWT } = require('../helpers/jwt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const { getMenu } = require('../helpers/menu');
 
 async function login(req, res = response) {
   try {
@@ -33,6 +34,7 @@ async function login(req, res = response) {
       ok: true,
       token,
       user: userDB,
+      menu: getMenu(userDB.role),
     });
   } catch (error) {
     console.log(error);
@@ -74,6 +76,7 @@ async function googleSignIn(req, res = response) {
       ok: true,
       msg: 'google signin',
       token,
+      menu: getMenu(userDB.role),
     });
   } catch (error) {
     console.log(error);
@@ -94,6 +97,7 @@ async function renewToken(req, res = response) {
       ok: true,
       token,
       user,
+      menu: getMenu(user.role),
     });
   } catch (error) {
     console.log(error);

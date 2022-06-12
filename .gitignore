@@ -1,3 +1,7 @@
 node_modules/
 .env
 pass.txt
+
+uploads/hospitals/**
+uploads/medics/**
+uploads/users/**
