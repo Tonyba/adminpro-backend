@@ -1,8 +1,8 @@
 const { response } = require('express');
 const { v4: uuidv4 } = require('uuid');
-const { updateImage } = require('../helpers/updateImage');
+const { updateImage, deleteTempImage, updateImageWithCloudinary } = require('../helpers/updateImage');
 const path = require('path');
-const fs = require('fs');
+const { setTimeout } = require('timers/promises');
 
 async function uploadFile(req, res = response) {
   try {
@@ -36,9 +36,8 @@ async function uploadFile(req, res = response) {
       });
     }
 
-    const fileName = `${uuidv4()}.${extFile}`;
-
-    const path = `./uploads/${type}/${fileName}`;
+    const fileName = file.name;
+    const path = `./temp/${fileName}`;
 
     file.mv(path, function (err) {
       if (err) {
@@ -48,14 +47,15 @@ async function uploadFile(req, res = response) {
           msg: 'error moving image',
         });
       }
+    });
 
-      updateImage(type, id, fileName);
+    await setTimeout(100);
 
-      res.json({
-        ok: true,
-        msg: 'File uploaded',
-        fileName,
-      });
+    updateImageWithCloudinary(path, type, id);
+
+    res.json({
+      ok: true,
+      msg: 'File uploaded',
     });
   } catch (error) {
     console.log(error);
