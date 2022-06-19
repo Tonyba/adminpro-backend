@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { updateImage, deleteTempImage, updateImageWithCloudinary } = require('../helpers/updateImage');
 const path = require('path');
 const { setTimeout } = require('timers/promises');
+const { cloudinary } = require('../utils/cloudinary');
 
 async function uploadFile(req, res = response) {
   try {
@@ -36,7 +37,7 @@ async function uploadFile(req, res = response) {
       });
     }
 
-    const fileName = file.name;
+    const fileName = `${uuidv4()}.${extFile}`;
     const path = `./temp/${fileName}`;
 
     file.mv(path, function (err) {
@@ -72,13 +73,23 @@ async function getFile(req, res) {
     const type = req.params.type;
     const file = req.params.file;
 
-    const pathImg = path.join(__dirname, `../uploads/${type}/${file}`);
+    storeFileURI = file;
 
-    if (fs.existsSync(pathImg)) {
-      res.sendFile(pathImg);
+    if (storeFileURI === 'no-image.png') {
+      return res.sendFile('./uploads/no-image.png');
+    }
+
+    const { resources } = await cloudinary.search
+      .expression(`folder:adminpro/${type} AND filename:${storeFileURI}`)
+      .max_results(1)
+      .sort_by('public_id', 'desc')
+      .execute();
+
+    if (resources.length > 0) {
+      console.log(resources);
+      res.sendFile(resources[0].secure_url);
     } else {
-      const pathImage = path.join(__dirname, '../uploads/no-image.png');
-      res.sendFile(pathImage);
+      return res.sendFile(__dirname + './uploads/no-image.png');
     }
   } catch (error) {
     console.log(error);
